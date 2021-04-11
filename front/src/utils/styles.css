@@ -1,0 +1,198 @@
+body {
+  margin: 0px;
+  padding-right: 0px;
+  padding-left: 0px;
+}
+.barra {
+  width: 950px; /*ancho del blog*/
+  margin: 0 auto;
+}
+#menu {
+  background: #f1f1f1; /* color de la barra*/
+  color: #333; /*color de las tres barritas*/
+  height: 50px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* borde inferior de la barra*/
+  width: 100%;
+  position: fixed;
+  z-index: 101;
+}
+#menu ul,
+#menu li {
+  margin: 0px auto;
+  padding: 0 0;
+  list-style: none;
+}
+#menu .iconos {
+  float: right;
+}
+#menu li {
+  float: left;
+  display: inline;
+  position: relative;
+  font: 11px Arial, sans-serif; /*tamaño y fuente del texto */
+  text-decoration: none;
+}
+#menu ul a {
+  display: block;
+  line-height: 50px;
+  padding: 0 14px;
+  color: #333; /*color del texto*/
+  text-transform: uppercase; /*letras mayúsculas*/
+  letter-spacing: 1.5px; /*espacio entre letras*/
+}
+#menu li a:hover {
+  color: #999; /*color del texto al pasar el ratón*/
+  text-decoration: none;
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  -ms-transition: all 0.1s ease-in-out;
+  -o-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
+#menu input {
+  display: none;
+  margin: 0 0;
+  padding: 0 0;
+  width: 50px;
+  height: 50px;
+  opacity: 0;
+  cursor: pointer;
+}
+#menu label {
+  display: none;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  font-size: 17px;
+  vertical-align: middle;
+}
+
+#menu ul.menus {
+  height: auto;
+  overflow: hidden;
+  width: 170px;
+  background: #f1f1f1; /*color del fondo del submenu*/
+  position: absolute;
+  z-index: 99;
+  display: none;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+}
+#menu ul.menus li {
+  display: block;
+  width: 100%;
+  font: 11px Arial, sans-serif; /*tamaño y fuente del  texto del submenu*/
+  text-transform: uppercase;
+  border-bottom: 1px solid #e9e9e9;
+  text-decoration: none;
+}
+#menu ul.menus li:last-child {
+  border-bottom: none;
+}
+#menu ul.menus a {
+  color: #333; /*color del  texto del submenu*/
+  line-height: 35px;
+}
+#menu li:hover ul.menus {
+  display: block;
+}
+#menu ul.menus a:hover {
+  color: #999; /*color del  texto del submenu al pasar el ratón*/
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  -ms-transition: all 0.1s ease-in-out;
+  -o-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
+.iconos a {
+  padding: 0 10px;
+  height: 50px;
+  display: inline-block;
+}
+#menu .iconos .fa {
+  font-size: 14px;
+  line-height: 50px;
+  color: #333; /*color del icono social*/
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  -ms-transition: all 0.1s ease-in-out;
+  -o-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
+#menu ul .fa {
+  font-size: 8px;
+  position: relative;
+  top: -1px;
+}
+#menu .iconos .fa:hover {
+  color: #999; /*color del icono social al pasar el ratón*/
+}
+
+@media screen and (max-width: 768px) {
+  #menu {
+    position: fixed;
+    z-index: 101;
+  }
+  #menu ul {
+    background: #f1f1f1; /*color del desplegable del menu movil*/
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 3;
+    height: auto;
+    display: none;
+    text-decoration: none;
+  }
+  #menu ul.menus {
+    width: 100%;
+    position: static;
+    padding-left: 20px;
+  }
+  #menu li {
+    display: block;
+    float: none;
+    width: auto;
+    font: 11px Arial, sans-serif;
+    text-decoration: none;
+  }
+  #menu ul a {
+    display: block;
+    line-height: 40px;
+    padding: 0 14px; /*tamaño y fuente del  menu movil*/
+    text-decoration: none;
+  }
+  #menu input,
+  #menu label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+  }
+  #menu input {
+    z-index: 4;
+  }
+  #menu input:checked + label {
+    color: #333; /*color de las tres barritas una vez se clica*/
+  }
+  #menu input:checked ~ ul {
+    display: block;
+    top: 50px;
+  }
+  .barra {
+    width: 95% !important;
+  }
+}
+header {
+  padding-top: 50px;
+}
+.titulo{
+width: 50%;
+justify-items: center;
+}
+.icono{
+width: 50%;
+justify-items: center;
+
+}
