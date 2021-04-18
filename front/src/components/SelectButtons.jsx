@@ -1,15 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "@material-ui/core/Button";
-
 import useStyles from "../utils/stylesRegister";
-
-import HomeNavbar from "../components/HomeNavbar";
 import { useHistory } from "react-router";
-
-import MotorcycleIcon from "@material-ui/icons/Motorcycle";
-
 import Box from "@material-ui/core/Box";
-import { Avatar } from "@material-ui/core";
+
 
 const Main = () => {
   const classes = useStyles();
@@ -17,7 +11,7 @@ const Main = () => {
 
   return (
     <div>
-      <HomeNavbar />
+
       <div>
       <h1>Registrarse como</h1>
         <Box 
@@ -48,7 +42,7 @@ const Main = () => {
                 variant="contained"
                 size="large"
                 className={classes.button_cadete}
-                onClick={() => history.push("/register")}
+                onClick={() => history.push("/register-as/cadete")}
               >
                 Cadete
               </Button>
@@ -73,7 +67,7 @@ const Main = () => {
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => history.push("/cadeteria/register")}
+                onClick={() => history.push("/register-as/cadeteria")}
                 size="large"
                 className={classes.button_cadeteria}
               >

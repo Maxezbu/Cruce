@@ -10,7 +10,7 @@ const cadeteriaArr = require("./cadeteria");
  *  y luego el resto.**/
 
 let cadeteriaPromise = () =>
-  Cadeteria.bulkCreate(cadeteriaArr)
+  Cadeteria.bulkCreate(cadeteriaArr, { individualHooks: true })
     .then((res) => {
       console.log(`--> Cadeterias creadas`);
       return res;
@@ -18,7 +18,7 @@ let cadeteriaPromise = () =>
     .catch((err) => err);
 
 let userPromise = () =>
-  User.bulkCreate(userArr)
+  User.bulkCreate(userArr, { individualHooks: true })
     .then((res) => {
       console.log(`-->Usuarios creados`);
       return res;

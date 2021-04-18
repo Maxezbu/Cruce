@@ -18,8 +18,10 @@ const cadeteriaController = {
         .update({
           active: !cadeteria.active,
         })
-        .then((cadeteria) => res.status(200).send(cadeteria))
-        .catch("hubo un error");
+        .then((cadeteria) => {
+          res.status(200).send(cadeteria);
+        })
+        .catch((err) => res.status(500).send(err));
     });
   },
 
@@ -83,14 +85,24 @@ const cadeteriaController = {
       .catch((e) => res.status(401).send("Error en autenticación"));
   },
 
-  editProfileCadeterias(req, res, next) {
-    console.log(req.params.id, req.body);
-    Cadeteria.findByPk(req.params.id)
-      .then((cadeteria) => {
-        cadeteria.update(req.body);
-      })
-      .then((res) => res.status(201).send(res))
-      .catch((err) => res.sendStatus(500));
+  async editProfileCadeterias(req, res, next) {
+    const { nameCompany, phoneNum, address } = req.body;
+
+    try {
+      const cadeteria = await Cadeteria.findByPk(req.params.id);
+      const updated = await cadeteria.update({
+        nameCompany,
+        phoneNum,
+        address,
+      });
+
+      if (updated) res.status(201).send(updated);
+      else {
+        res.send(updated);
+      }
+    } catch (e) {
+      res.send(e);
+    }
   },
 };
 module.exports = cadeteriaController;

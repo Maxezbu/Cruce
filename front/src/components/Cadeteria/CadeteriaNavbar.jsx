@@ -7,7 +7,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { clearUser } from "../../state/user";
+import { logout } from "../../state/cadeterias";
 import useStyles from "../../utils/stylesNavbar";
 
 import { useSnackbar } from "notistack";
@@ -24,9 +24,9 @@ const CadeteriaNavbar = () => {
   const messages = messagesHandler(useSnackbar())
 
 
-  const logout = () => {
+  const logoutCadeteria = () => {
     localStorage.removeItem("token");
-    dispatch(clearUser()) && messages.info('Deslogueado correctamente')
+    dispatch(logout()) && messages.info('Deslogueado correctamente')
     history.push("/cadeteria/login");
   };
 
@@ -54,7 +54,7 @@ const CadeteriaNavbar = () => {
             </>
           ) : (
             <>
-              <Button color="inherit" onClick={logout}>
+              <Button color="inherit" onClick={logoutCadeteria}>
                 Logout
               </Button>
             </>

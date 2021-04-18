@@ -3,6 +3,7 @@ const db = require("../db");
 const crypto = require("crypto");
 
 class User extends S.Model {}
+
 User.init(
   {
     firstName: {
@@ -16,14 +17,10 @@ User.init(
     email: {
       type: S.STRING,
       allowNull: false,
-      unique: true,
-
+      unique: { msg: "El email ya existe" },
       validate: {
         isEmail: {
           msg: "Agrega un correo válido",
-        },
-        notEmpty: {
-          msg: "Favor ingrese un correo electronico",
         },
       },
     },
@@ -34,9 +31,9 @@ User.init(
     phoneNum: {
       type: S.STRING,
       allowNull: false,
-      unique: true,
+      unique: { msg: "Ya existe este numero telefonico" },
       validate: {
-        len: { msg: "Debe tener 10 caracteres", args: [10, 10] },
+        len: { msg: "El telefono debe tener 10 digitos", args: [10, 10] },
       },
     },
     admin: {
@@ -53,11 +50,14 @@ User.init(
       type: S.BOOLEAN,
       defaultValue: false,
     },
-
     vehicle: {
       type: S.ENUM({
         values: ["bicicleta", "auto", "moto"],
       }),
+    },
+    resetToken: {
+      type: S.STRING,
+      defaultValue: "",
     },
     salt: {
       type: S.STRING,
@@ -66,13 +66,17 @@ User.init(
   { sequelize: db, modelName: "user" }
 );
 
+
+
 User.addHook("beforeCreate", (user) => {
   user.salt = crypto.randomBytes(20).toString("hex");
   user.password = user.hashPassword(user.password);
 });
+
 User.prototype.hashPassword = function (password) {
   return crypto.createHmac("Sha1", this.salt).update(password).digest("hex");
 };
+
 User.prototype.validPassword = function (passwordEnLogin) {
   return this.password === this.hashPassword(passwordEnLogin);
 };

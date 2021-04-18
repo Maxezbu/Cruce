@@ -9,16 +9,27 @@ import Typography from "@material-ui/core/Typography";
 import { singleOrder, orderState } from "../../state/orders";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import axios from "axios";
 import { Grid } from "@material-ui/core";
-import Navbar from "../Navbar";
+import axios from "axios";
+
+import "leaflet/dist/leaflet.css";
+
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Circle,
+  Tooltip,
+} from "react-leaflet";
 
 const useStyles = makeStyles({
   root: {
     maxWidth: 500,
+    maxHeight: 500,
   },
   media: {
-    height: 300,
+    height: 400,
   },
 });
 
@@ -29,15 +40,50 @@ export default function SingleOrder({ match }) {
   const [products, setProducts] = useState([]);
   const order = useSelector((state) => state.orders.singleOrder);
 
-  const cadete = useSelector((state) => state.cadete);
+  const cadete = useSelector((state) => state.users.user);
+  const [coord, setCoord] = useState(/*[-26.8198, -65.2169]*/);
+  const [carga, setCarga] = useState(false);
 
   useEffect(() => {
-    dispatch(singleOrder(match.id)).then(
-      axios
-        .get(`http://localhost:8000/api/product/${match.orderNumber}`)
-        .then((res) => setProducts(res.data.count))
-        .catch((err) => console.log(err))
-    );
+    dispatch(singleOrder(match.id)).then((res) => {
+      let ordenes = res.payload;
+      setCarga(true);
+      return axios
+        .get(
+          `https://nominatim.openstreetmap.org/search?street=${ordenes.number}+${ordenes.street}&city=${ordenes.city}&state=${ordenes.province}&country=argentina&format=geocodejson`
+        )
+        .then((res) => {
+          setCoord(res.data.features[0].geometry.coordinates);
+        })
+        .then(() => {
+          return (
+            axios
+              .get(`http://localhost:8000/api/product/${match.orderNumber}`)
+
+              .then((res) => setProducts(res.data.count))
+              /* .then(() => {
+            return axios.get(
+              `https://nominatim.openstreetmap.org/search?street=${ordenes.number}+${ordenes.street}&city=${ordenes.city}&state=${ordenes.province}&country=argentina&format=geocodejson`
+            );
+          })
+          .then((res) => {
+            setCoord(res.data.features[0].geometry.coordinates);
+          }) */
+              .then(setCarga(false))
+              /*  .then(() => {
+            return axios.get(
+              `https://nominatim.openstreetmap.org/search?street=${ordenes.number}${ordenes.street}&city=${ordenes.city}&state=${ordenes.province}&country=argentina&format=geocodejson`
+            );
+          })
+          .then((res) => {
+            console.log(res, "ACA ESTA LA RESPUESTA");
+            setCoord(res.data.features[0].geometry.coordinates);
+          });
+      }) */
+              .catch((err) => console.log(err))
+          );
+        });
+    });
   }, []);
 
   const ChangeState = (state) => {
@@ -54,24 +100,11 @@ export default function SingleOrder({ match }) {
 
   return (
     <>
-      <Navbar />
       <Card className={classes.root}>
         <CardActionArea>
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3350.274812272798!2d-68.84847478505935!3d-32.890901676398016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x967e09c0d5fed751%3A0x859ef7231006759c!2sMITRE%20870!5e0!3m2!1ses-419!2sar!4v1617304827229!5m2!1ses-419!2sar"
-            title="img"
-            width="100%"
-            height="70%"
-            style={{ border: 0 }}
-            allowfullscreen=""
-            loading="lazy"
-          ></iframe>
-          ;
           <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
-              {order.orderNumber}
-            </Typography>
-
+            N° de Orden: {order.orderNumber}
+            <h4>Productos</h4>
             {products &&
               products.map((product) => {
                 return (
@@ -85,11 +118,10 @@ export default function SingleOrder({ match }) {
                   </Grid>
                 );
               })}
-
-            <Typography gutterBottom variant="h5" component="h2">
+            <Typography gutterBottom variant="h6" component="h3">
               {order.clientName + " " + order.clientLastName}
             </Typography>
-            <Typography gutterBottom variant="h5" component="h2">
+            <Typography gutterBottom variant="h6" component="h3">
               {order.street +
                 " " +
                 order.number +
@@ -133,11 +165,30 @@ export default function SingleOrder({ match }) {
             </>
           ) : null}
         </CardActions>
+
+        {!carga ? (
+          <Grid container xs={12} alignItems="flex-start">
+            <MapContainer
+              center={coord && [coord[1], coord[0]]}
+              zoom={15}
+              scrollWheelZoom={true}
+              className="leaflet-container"
+            >
+              <Circle
+                center={coord && [coord[1], coord[0]]}
+                pathOptions={{ fillColor: "blue" }}
+                radius={200}
+              >
+                <Tooltip></Tooltip>
+              </Circle>
+              <TileLayer
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+            </MapContainer>
+          </Grid>
+        ) : null}
       </Card>
     </>
   );
 }
-
-/*
-                    href={`https://www.google.com/maps/place/${order.destination.street}%20${order.destination.number}%20${order.destination.city}`}
- */

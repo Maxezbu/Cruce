@@ -9,12 +9,12 @@ Cadeteria.init(
     nameCompany: {
       type: S.STRING,
       allowNull: false,
-      unique: {msg: 'Este nombre ya existe' },
+      unique: { msg: "Este nombre ya existe" },
     },
     CUIT: {
       type: S.STRING,
       allowNull: false,
-      unique: {msg: 'El CUIT ingresado ya existe'},
+      unique: { msg: "El CUIT ingresado ya existe" },
       validate: {
         len: { msg: "El CUIT debe tener 11 digitos", args: [11, 11] },
       },
@@ -22,7 +22,7 @@ Cadeteria.init(
     email: {
       type: S.STRING,
       allowNull: false,
-      unique: {msg: 'El email ya existe'},
+      unique: { msg: "El email ya existe" },
       validate: {
         isEmail: {
           msg: "Agrega un correo válido",
@@ -36,10 +36,10 @@ Cadeteria.init(
     phoneNum: {
       type: S.STRING,
       allowNull: false,
-      unique: {msg: 'Ya existe este numero telefonico'},
+      unique: { msg: "Ya existe este numero telefonico" },
       validate: {
         len: { msg: "El telefono debe tener 10 digitos", args: [10, 10] },
-        },
+      },
     },
     active: {
       type: S.BOOLEAN,
@@ -56,11 +56,13 @@ Cadeteria.init(
     salt: {
       type: S.STRING,
     },
+    resetToken: {
+      type: S.STRING,
+      defaultValue: "",
+    },
   },
   { sequelize: db, modelName: "cadeteria" }
 );
-
-
 
 // Cadeteria.addHook("beforeUpdate", (cadeteria) => {
 //   cadeteria.salt = crypto.randomBytes(20).toString("hex");

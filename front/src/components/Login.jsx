@@ -15,19 +15,13 @@ import Copyright from "../utils/Copyright";
 import useStyles from "../utils/stylesLogins";
 import { useSnackbar } from "notistack";
 
-import { useDispatch } from "react-redux";
-
-import { loginRequest } from "../state/user";
-import { fetchMe } from "../state/user";
-
+import { useDispatch, useSelector } from "react-redux";
+import { loginRequest, fetchMe } from "../state/users";
 import messagesHandler from "../utils/messagesHandler";
-
-import HomeNavbar from '../components/HomeNavbar'
-
 
 export default function Login() {
   const messages = messagesHandler(useSnackbar());
-
+  const cadete = useSelector((state) => state.users.user);
   const classes = useStyles();
   const [input, setInput] = useState([]);
   const dispatch = useDispatch();
@@ -54,10 +48,12 @@ export default function Login() {
       })
       .catch((e) => history.push("/login"));
   };
+  if (cadete && cadete.id) {
+    history.push("/cadete");
+  }
 
   return (
     <>
-    <HomeNavbar/>
       <Grid container component="main" className={classes.root}>
         <CssBaseline />
         <Grid item xs={false} sm={4} md={7} className={classes.image} />
@@ -110,9 +106,14 @@ export default function Login() {
                 Sign In
               </Button>
               <Grid container>
-                <Grid item xs></Grid>
+                <Grid item xs>
+                  <Link to="/forgot">Olvidaste tu contraseña?</Link>
+                </Grid>
+
                 <Grid item>
-                  <Link to="/register">{"No tienes cuenta? Registrate"}</Link>
+                  <Link to="/register-as/cadete">
+                    {"No tienes cuenta? Registrate"}
+                  </Link>
                 </Grid>
               </Grid>
               <Box mt={5}>

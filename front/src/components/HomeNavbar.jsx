@@ -7,7 +7,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import { Link, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { clearUser } from "../state/user";
+import { logout } from "../state/users";
 import useStyles from "../utils/stylesNavbar";
 
 import { useSnackbar } from "notistack";
@@ -17,20 +17,23 @@ const HomeNavbar = () => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.cadete);
+  const user = useSelector((state) => state.users.user);
   const messages = messagesHandler(useSnackbar());
   const token = localStorage.getItem("token");
 
-  const logout = () => {
+  const logoutUser = () => {
     localStorage.removeItem("token");
-    dispatch(clearUser()) && messages.info();
+    dispatch(logout()) && messages.info();
     history.push("/");
   };
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" style={{ backgroundColor: "#d9d9d9", color: 'black' }} >
-        <Toolbar  >
+      <AppBar
+        position="static"
+        style={{ backgroundColor: "#d9d9d9", color: "black" }}
+      >
+        <Toolbar>
           <IconButton
             edge="start"
             className={classes.menuButton}
@@ -51,7 +54,7 @@ const HomeNavbar = () => {
             </>
           ) : (
             <>
-              <Button color="inherit" onClick={logout}>
+              <Button color="inherit" onClick={logoutUser}>
                 Logout
               </Button>
             </>
@@ -61,7 +64,6 @@ const HomeNavbar = () => {
           </Link>
           {user && user.admin ? (
             <>
-          
               <Link to="/admin" style={{ color: "inherit" }}>
                 <Button color="inherit">admin panel</Button>
               </Link>

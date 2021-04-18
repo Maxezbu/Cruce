@@ -11,26 +11,20 @@ import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
-
-
-
-import CadeteriaNavbar from './CadeteriaNavbar'
-
 import { useSnackbar } from "notistack";
+import { useDispatch, useSelector } from "react-redux";
 
-import { useDispatch } from "react-redux";
-
-import { CadloginRequest } from "../../state/cadeteria";
-import { fetchCad } from "../../state/cadeteria";
+import { CadloginRequest } from "../../state/cadeterias";
+import { fetchCad } from "../../state/cadeterias";
 
 //UTILS
 import messagesHandler from "../../utils/messagesHandler";
 import Copyright from "../../utils/Copyright";
 import useStyles from "../../utils/stylesLogins";
 
-const CadeteriaLogin = () => {
+const LoginCadeteria = () => {
   const messages = messagesHandler(useSnackbar());
-
+  const cadeteria = useSelector((state) => state.cadeterias.singleCadeteria);
   const classes = useStyles();
   const [input, setInput] = useState([]);
   const dispatch = useDispatch();
@@ -47,16 +41,19 @@ const CadeteriaLogin = () => {
     dispatch(CadloginRequest(input))
       .then((res) => dispatch(fetchCad()))
       .then((res) => {
-        console.log('resouesta en login ', res)
-        if (!res.payload)  messages.error() && history.push("/cadeteria/login");
-        else messages.success('Cadeteria ingresada correctamente') && history.push("/cadeteria");
+        console.log("resouesta en login ", res);
+        if (!res.payload) messages.error();
+        else
+          messages.success("Cadeteria ingresada correctamente") &&
+            history.push("/cadeteria");
       })
-      .catch((e) => messages.error() && history.push("/cadeteria/login"));
+      .catch((e) => messages.error());
   };
-
+  if (cadeteria && cadeteria.id) {
+    history.push("/cadeteria");
+  }
   return (
     <div>
-      <CadeteriaNavbar/>
       <Grid container component="main" className={classes.root}>
         <CssBaseline />
         <Grid item xs={false} sm={4} md={7} className={classes.image} />
@@ -109,9 +106,13 @@ const CadeteriaLogin = () => {
                 Sign In
               </Button>
               <Grid container>
-                <Grid item xs></Grid>
+                <Grid item xs>
+                  <Link to="/forgot-cadeteria">Olvidaste tu contraseña?</Link>
+                </Grid>
                 <Grid item>
-                  <Link to="/cadeteria/register">{"No tienes cuenta? Registrate"}</Link>
+                  <Link to="/register-as/cadeteria">
+                    {"No tienes cuenta? Registrate"}
+                  </Link>
                 </Grid>
               </Grid>
               <Box mt={5}>
@@ -125,4 +126,4 @@ const CadeteriaLogin = () => {
   );
 };
 
-export default CadeteriaLogin;
+export default LoginCadeteria;

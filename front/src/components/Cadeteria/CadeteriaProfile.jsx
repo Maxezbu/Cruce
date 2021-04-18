@@ -3,23 +3,15 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-
-import { InputLabel } from "@material-ui/core";
-import { editProfileCadeteria } from "../../state/cadeteria";
-
 import useStyles from "../../utils/stylesCadeteria";
-
 import { useSnackbar } from "notistack";
 import messageHandler from "../../utils/messagesHandler";
 
-import { fetchCad } from "../../state/cadeteria";
-import CadeteriaNavbar from "./CadeteriaNavbar";
+import { editProfileCadeteria } from "../../state/cadeterias";
+import { fetchCad } from "../../state/cadeterias";
 
 export default function ProfileCadeteria() {
   const dispatch = useDispatch();
@@ -29,7 +21,7 @@ export default function ProfileCadeteria() {
 
   const messages = messageHandler(useSnackbar());
 
-  const cadeteria = useSelector((state) => state.cadeteria);
+  const cadeteria = useSelector((state) => state.cadeterias.singleCadeteria);
 
   const handleChange = (e) => {
     const key = e.target.name;
@@ -42,25 +34,21 @@ export default function ProfileCadeteria() {
     e.preventDefault();
     const id = cadeteria.id;
     dispatch(editProfileCadeteria({ id, input }))
-      .then((res) => {
-        console.log("RESPUES DE EDICION DE PERFIL", res);
-
-        if (res.payload === undefined) {
-          messages.error("ocurrió un error");
-          history.push("/cadeteria/listOrders");
+      .then(({ payload }) => {
+        if (payload.errors) {
+          payload.errors.map((e) => messages.error(e.message)) && dispatch(fetchCad());
         } else {
           dispatch(fetchCad());
-          messages.info("datos actualizados");
+          messages.info("datos actualizados") && history.push("/cadeteria");
         }
       })
-      .catch((err) => console.log("Error en el catch ===>", err));
+      .catch((err) => messages.error("Fallo al actualizar los datos"));
   };
 
   console.log("CADETERIA EN PROFILE ====>", cadeteria);
 
   return (
     <React.Fragment>
-      <CadeteriaNavbar />
       <Typography variant="h6" gutterBottom>
         Editar el perfil de la cadeteria
       </Typography>
@@ -73,27 +61,6 @@ export default function ProfileCadeteria() {
               label="Nombre"
               fullWidth
               placeholder={cadeteria && cadeteria.nameCompany}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={10}>
-            <TextField
-              name="email"
-              label="Email"
-              id="email"
-              fullWidth
-              placeholder={cadeteria && cadeteria.email}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={10}>
-            <TextField
-              id="password"
-              name="password"
-              label="Contraseña"
-              fullWidth
-              type="password"
               onChange={handleChange}
             />
           </Grid>

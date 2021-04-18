@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Grid from "@material-ui/core/Grid";
-import Container from "@material-ui/core/Container";
+import { Button, Container, Grid, CssBaseline } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import adminMenuStyles from "../utils/stylesAdmin";
-import { upLoadOrders } from "../state/admin";
-import { useDispatch } from "react-redux";
-import Navbar from "./Navbar";
+import adminMenuStyles from "../../utils/stylesAdmin";
+import { upLoadOrders } from "../../state/orders";
+import { useDispatch, useSelector } from "react-redux";
+import socket from "../../utils/socket";
+import { adminOrders } from "../../state/orders";
 
-const Prueba = () => {
+const ExcelUpload = () => {
   const classes = adminMenuStyles();
   const [items, setItems] = useState([]);
+  const orders = useSelector((state) => state.orders.orders);
   const dispatch = useDispatch();
 
   const readExcel = (file) => {
@@ -47,17 +46,17 @@ const Prueba = () => {
 
   const upload = () => {
     dispatch(upLoadOrders({ items })).then((res) => {
-      console.log("PEEEEEEEEEEEEEEEEEEE", res);
       if (res.payload === 200) {
+        dispatch(adminOrders());
         alert("Tu archivo se cargo correctamente");
       } else {
         alert("Hubo un error en la carga");
       }
     });
+    socket.emit("ordenes", orders);
   };
   return (
     <React.Fragment>
-    <Navbar/>
       <CssBaseline />
       <main>
         {/* Hero unit */}
@@ -75,11 +74,11 @@ const Prueba = () => {
                         file.name.slice(
                           file.name.length - 4,
                           file.name.length
-                        ) == ".xls" ||
+                        ) === ".xls" ||
                         file.name.slice(
                           file.name.length - 5,
                           file.name.length
-                        ) == ".xlsx"
+                        ) === ".xlsx"
                       ) {
                         readExcel(file);
                       } else {
@@ -123,4 +122,4 @@ const Prueba = () => {
   );
 };
 
-export default Prueba;
+export default ExcelUpload;

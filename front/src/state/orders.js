@@ -1,23 +1,35 @@
-import {
-  createReducer,
-  createAction,
-  createAsyncThunk,
-} from "@reduxjs/toolkit";
+import { createReducer, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const setOrders = createAction("SET_ORDERS");
-
-export const ordersList = createAsyncThunk("OREDERS_LIST", () => {
+// Trae todas las órdenes
+export const allOrders = createAsyncThunk("ALL_OREDERS", (id) => {
   return axios
-    .get("http://localhost:8000/api/orders")
-    .then((res) => res.data)
+    .get(`http://localhost:8000/api/orders/getCadeteOrders/${id}`)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((e) => console.log(e));
+});
+export const adminOrders = createAsyncThunk("ADMIN_ORDERS", () => {
+  return axios
+    .get(`http://localhost:8000/api/orders/adminOrders`)
+    .then((res) => {
+      return res.data;
+    })
     .catch((e) => console.log(e));
 });
 
+// Carga las órdenes del xls al backend
+export const upLoadOrders = createAsyncThunk("UPLOAD_ORDERS", (items) => {
+  return axios
+    .post("http://localhost:8000/api/orders", items)
+    .then((res) => res.status);
+});
+
+// Le cambia el estado a ala  orden (pendiente, en camino, entregada, devuelto a cadetería)
 export const orderState = createAsyncThunk(
   "ORDERS_STATE",
   (order, thunkApi) => {
-    console.log("ACA ESTA LA ORDEN DE REDUX",order)
     return axios
       .put(`http://localhost:8000/api/orders/edit/${order.orderNumber}`, {
         status: order.state,
@@ -32,6 +44,7 @@ export const orderState = createAsyncThunk(
   }
 );
 
+// Trae una orden en particular
 export const singleOrder = createAsyncThunk("SINGLE_ORDER", (id) => {
   return axios
 
@@ -45,17 +58,21 @@ const updateOrder = (orders, newOrder) => {
   );
 };
 
-
 const initialState = {
   orders: [],
   singleOrder: {},
 };
 
 const ordersReducer = createReducer(initialState, {
-  
-  [setOrders]: (state, action) => action.payload,
-
-  [ordersList.fulfilled]: (state, action) => {
+  [allOrders.fulfilled]: (state, action) => {
+    if (action.payload.orders) {
+      return { ...state, orders: action.payload.orders };
+    } else {
+      return { ...state, orders: action.payload };
+    }
+  },
+  [adminOrders.fulfilled]: (state, action) => {
+    console.log("ORDENES ADMIN REDUX", action.payload);
     return { ...state, orders: action.payload };
   },
 
@@ -66,7 +83,10 @@ const ordersReducer = createReducer(initialState, {
   [singleOrder.fulfilled]: (state, action) => {
     return { ...state, singleOrder: action.payload };
   },
-  
+
+  [upLoadOrders.fulfilled]: (state, action) => {
+    return { ...state, orders: action.payload };
+  },
 });
 
 export default ordersReducer;

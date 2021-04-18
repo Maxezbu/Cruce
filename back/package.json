@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
-    "seed": "node ./seed/index.js"
+    "seed": "node ./seed/index.js",
+    "prestart": "npm run seed"
   },
   "author": "",
   "license": "ISC",
@@ -16,11 +17,13 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
+    "nodemailer": "^6.5.0",
     "nodemon": "^2.0.7",
-    "pg": "^8.5.1",
+    "pg": "^8.6.0",
     "pg-hstore": "^2.3.3",
     "seed": "^0.4.4",
     "sequelize": "^6.6.2",
+    "socket.io": "^4.0.1",
     "volleyball": "^1.5.1"
   }
 }

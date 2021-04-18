@@ -39,7 +39,7 @@ const AdminPanel = () => {
                 </Grid>
                 <Grid item xs={16}>
                   <Link
-                    to="/admin/orders"
+                    to="/admin/metrics"
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
                     <Button variant="contained" className={classes.button_admin}>

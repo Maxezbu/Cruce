@@ -8,3 +8,6 @@ const db = new Sequelize ( "postgres:/cruce",
   })
 
 module.exports = db
+
+
+
