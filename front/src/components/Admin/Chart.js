@@ -1,66 +1,46 @@
 import React from "react";
-import { useTheme } from "@material-ui/core/styles";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Label,
-  ResponsiveContainer,
-} from "recharts";
-import Title from "./Title";
+import { Line } from "@reactchartjs/react-chart.js";
 
-// Generate Sales Data
-function createData(time, amount) {
-  return { time, amount };
-}
+const data = {
+  labels: ["1", "2", "3", "4", "5", "6"],
+  datasets: [
+    {
+      label: "# of Votes",
+      data: [12, 19, 3, 5, 2, 3],
+      fill: false,
+      backgroundColor: "rgb(255, 99, 132)",
+      borderColor: "rgba(255, 99, 132, 0.2)",
+    },
+  ],
+};
 
-const data = [
-  createData("00:00", 0),
-  createData("03:00", 300),
-  createData("06:00", 600),
-  createData("09:00", 800),
-  createData("12:00", 1500),
-  createData("15:00", 2000),
-  createData("18:00", 2400),
-  createData("21:00", 2400),
-  createData("24:00", undefined),
-];
+const options = {
+  scales: {
+    yAxes: [
+      {
+        ticks: {
+          beginAtZero: true,
+        },
+      },
+    ],
+  },
+};
 
-export default function Chart() {
-  const theme = useTheme();
-
-  return (
-    <React.Fragment>
-      <Title>Today</Title>
-      <ResponsiveContainer>
-        <LineChart
-          data={data}
-          margin={{
-            top: 16,
-            right: 16,
-            bottom: 0,
-            left: 24,
-          }}
+const LineChart = () => (
+  <>
+    <div className="header">
+      <h1 className="title">Line Chart</h1>
+      <div className="links">
+        <a
+          className="btn btn-gh"
+          href="https://github.com/reactchartjs/react-chartjs-2/blob/react16/example/src/charts/Line.js"
         >
-          <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
-          <YAxis stroke={theme.palette.text.secondary}>
-            <Label
-              angle={270}
-              position="left"
-              style={{ textAnchor: "middle", fill: theme.palette.text.primary }}
-            >
-              Sales ($)
-            </Label>
-          </YAxis>
-          <Line
-            type="monotone"
-            dataKey="amount"
-            stroke={theme.palette.primary.main}
-            dot={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </React.Fragment>
-  );
-}
+          Github Source
+        </a>
+      </div>
+    </div>
+    <Line data={data} options={options} />
+  </>
+);
+
+export default LineChart;

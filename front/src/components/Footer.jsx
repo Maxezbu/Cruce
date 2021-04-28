@@ -1,7 +1,6 @@
 import React from "react";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
-import useStyles from "../utils/stylesFooter";
+import { CssBaseline, Container } from "@material-ui/core";
+import useStyles from "../styles/stylesFooter";
 import Copyright from "../utils/Copyright";
 
 export default function StickyFooter() {
@@ -12,7 +11,7 @@ export default function StickyFooter() {
       <CssBaseline />
       <footer className={classes.footer}>
         <Container maxWidth="sm">
-        <Copyright />
+          <Copyright />
         </Container>
       </footer>
     </div>

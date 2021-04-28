@@ -1,21 +1,27 @@
-import React from "react";
-
-import Footer from "../components/Footer";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import CadeteOrders from "../components/Cadete/CadeteOrders";
-
-import Error from "../components/Error";
+import { fetchMe } from "../state/users";
 
 export default function Cadete() {
   const user = useSelector((state) => state.users.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchMe());
+  }, [dispatch]);
+
   return (
     <div>
-      {user.id && !user.admin /* && user.authorized == true */ ? (
+      {user && user.id && !user.admin ? (
         <CadeteOrders />
       ) : (
-        <Error />
+        <img
+          style={{ maxWidth: "100%" }}
+          src="https://images.assetsdelivery.com/compings_v2/lkeskinen/lkeskinen1610/lkeskinen161000200.jpg"
+          alt="403"
+        />
       )}
-      <Footer />
     </div>
   );
 }

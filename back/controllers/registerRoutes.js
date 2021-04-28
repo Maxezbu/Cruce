@@ -31,7 +31,6 @@ const registerController = {
         .catch((errors) => res.send(errors));
     });
   },
-  // .catch((err) => res.send(err));
 };
 
 module.exports = registerController;

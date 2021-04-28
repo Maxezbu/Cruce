@@ -4,6 +4,5 @@ const registerController = require("../controllers/registerRoutes");
 
 router.post("/", registerController.register);
 
-
 module.exports = router;
 

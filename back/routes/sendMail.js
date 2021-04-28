@@ -28,9 +28,7 @@ router.post("/user", (req, res) => {
   );
 });
 
-
 router.post("/admin", (req, res) => {
-
   const cadeteria = req.body;
   const text = `Ha llegado una nueva peticion por parte de: ${cadeteria.nameCompany}, email: ${cadeteria.email}`;
 
@@ -46,11 +44,5 @@ router.post("/admin", (req, res) => {
     }
   );
 });
-
-
-
-
-
-
 
 module.exports = router;

@@ -25,5 +25,4 @@ module.exports = [
     phoneNum: "2943145678",
     address: "San Juan 123",
   },
-  
 ];

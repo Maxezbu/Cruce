@@ -1,30 +1,27 @@
 import React, { useState } from "react";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Grid,
+  Box,
+  Typography,
+  Container,
+} from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
-
-import Container from "@material-ui/core/Container";
-import useStyles from "../utils/stylesResetPass";
+import useStyles from "../styles/stylesResetPass";
 import Copyright from "../utils/Copyright";
-
-import { useSnackbar } from "notistack";
 import messagesHandler from "../utils/messagesHandler";
-
 import { forgotPassword } from "../state/resetPassword";
+import { useSnackbar } from "notistack";
 import { useHistory } from "react-router";
 
 const ResetPassword = () => {
   const classes = useStyles();
   const messages = messagesHandler(useSnackbar());
-
-  const [input, setInput] = useState({});
-
   const history = useHistory();
+  const [input, setInput] = useState({});
 
   const handleChange = (e) => {
     const key = e.target.name;
@@ -58,7 +55,7 @@ const ResetPassword = () => {
             required
             fullWidth
             name="email"
-            label="Correo electronico"
+            label="Correo electrónico"
             type="email"
             id="email"
             autoComplete="current-email"
@@ -72,7 +69,7 @@ const ResetPassword = () => {
             color="primary"
             className={classes.submit}
           >
-            Enviar confirmacion
+            Enviar confirmación
           </Button>
           <Grid container></Grid>
         </form>

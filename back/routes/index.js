@@ -22,10 +22,9 @@ router.use("/login", LoginRoutes);
 router.use("/admin", adminRoutes);
 router.use("/user", userRoutes);
 router.use("/user", auth);
-router.use('/metrics', metrics)
+router.use("/metrics", metrics);
 
 //envio de emails
-router.use("/sendmail", sendEmail);
 router.use("/sendmail", sendEmail);
 
 module.exports = router;

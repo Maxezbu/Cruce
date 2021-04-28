@@ -11,7 +11,7 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { useParams, useHistory } from "react-router-dom";
 
-import useStyles from "../../utils/stylesResetPass";
+import useStyles from "../../styles/stylesResetPass";
 import Copyright from "../../utils/Copyright";
 import { useSnackbar } from "notistack";
 import { resetPasswordCadeteria } from "../../state/resetPassword";

@@ -33,33 +33,33 @@ const useStyles = makeStyles((theme) => ({
   },
 
   button_cadeteria: {
-    backgroundColor: '#ff5757',
+    backgroundColor: "#ff5757",
     width: "200px",
     height: "100px",
-    margin: '1rem',
-    borderRadius: '1rem',
+    margin: "1rem",
+    borderRadius: "1rem",
     fontWeight: "bold",
     fontSize: "1.5rem",
   },
 
   button_cadete: {
-    backgroundColor: '#5271ff',
+    backgroundColor: "#5271ff",
     width: "200px",
     height: "100px",
-    margin: '1rem',
-    borderRadius: '1rem',
+    margin: "1rem",
+    borderRadius: "1rem",
     fontWeight: "bold",
-    fontSize: "1.8rem"
+    fontSize: "1.8rem",
   },
   button_home: {
-    backgroundColor: '#d9d9d9',
+    backgroundColor: "#d9d9d9",
     width: "200px",
     height: "100px",
-    margin: '1rem',
-    borderRadius: '1rem',
+    margin: "1rem",
+    borderRadius: "1rem",
     fontWeight: "bold",
     fontSize: "1.5rem",
-    textShadow: "1px 1px 2px black"
+    textShadow: "1px 1px 2px black",
   },
 
   small: {
@@ -78,7 +78,6 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(30),
     height: theme.spacing(22),
   },
-
 }));
 
 export default useStyles;

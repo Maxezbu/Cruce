@@ -77,7 +77,6 @@ const authController = {
         : res.status(400).send("Error al cambiar la password");
     }
   },
-  ///////////////////////////
 
   async forgotPasswordCadeteria(req, res) {
     const { email } = req.body;

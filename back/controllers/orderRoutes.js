@@ -68,29 +68,80 @@ const NewOrderController = {
     }
   },
 
-  changeStateOrders(req, res) {
+  /*  changeStateOrders(req, res) {
+    const orderNumber = req.params.id;
+    const status = req.body.status;
+    const cadeteId = req.body.cadeteId; 
+    User.findByPk(cadeteId)
+      .then((cadete) => {
+        Cadeteria.findByPk(cadete.cadeteriumId).then((cadeteria) => {
+          Order.findOne({
+            where: {
+              orderNumber: orderNumber,
+            },
+          }).then((order) => {
+            if (order.userId) res.send("La orden ya está asignada");
+            if (order.status === "Pendiente") {
+              order
+                .setUser(cadete)
+                .then(order.setCadeterium(cadeteria))
+                .then(
+                  order.update({
+                    status: status,
+                    pickUpDate: Date.now(),
+                  })
+                )
+            
+            }
+            if (order.status === "En camino") {
+              order
+                .update({
+                  status: status,
+                  deliveryDate: Date.now(),
+                })
+                
+            }
+          });
+        });
+      })
+      .catch((err) => res.send(err));
+  },  */
+
+  async changeStateOrders(req, res) {
     const orderNumber = req.params.id;
     const status = req.body.status;
     const cadeteId = req.body.cadeteId;
-
-    User.findByPk(cadeteId).then((cadete) => {
-      Cadeteria.findByPk(cadete.cadeteriumId).then((cadeteria) => {
-        Order.findOne({
-          where: {
-            orderNumber: orderNumber,
-          },
-        })
-          .then((order) => {
-            order
-              .setUser(cadete)
-              .then(order.setCadeterium(cadeteria))
-              .then(order.update({ status: status }))
-              .then((newOrders) => res.send(newOrders));
-          })
-          .catch((err) => console.log(err));
+    try {
+      const cadete = await User.findByPk(cadeteId);
+      const cadeteria = await Cadeteria.findByPk(cadete.cadeteriumId);
+      const order = await Order.findOne({
+        where: {
+          orderNumber: orderNumber,
+        },
       });
-    });
+
+      if (order.userId && status === "En camino")
+        res.send("La orden ya está asignada");
+      else if (order.status === "Pendiente") {
+        await order.setUser(cadete);
+        await order.setCadeterium(cadeteria);
+        const updated = await order.update({
+          status: status,
+          pickUpDate: Date.now(),
+        });
+        res.send(updated);
+      } else if (order.status === "En camino") {
+        const updated = await order.update({
+          status: status,
+          deliveryDate: Date.now(),
+        });
+        res.send(updated);
+      }
+    } catch (e) {
+      res.send(e);
+    }
   },
+
   async ordersFromAdmin(req, res) {
     try {
       const orders = await Order.findAll({});
@@ -99,26 +150,6 @@ const NewOrderController = {
       res.send(e);
     }
   },
-
-  /*  Order.findByPk(id).then((order) => {
-            order
-              .setUser(cadete)
-              .then(() => {
-                order.setCadeterium(cadeteria);
-              })
-              .then(() => {
-                order
-                  .update({
-                    status: status,
-                  })
-                  .then((order) => {
-                    res.send(order);
-                  });
-              });
-          });
-        });
-      })
-      .catch((e) => console.log(e));*/
 };
 
 module.exports = NewOrderController;

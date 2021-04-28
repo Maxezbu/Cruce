@@ -1,27 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
+import axios from "axios";
+import {
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  Button,
+  Typography,
+  makeStyles,
+  Grid,
+} from "@material-ui/core";
 import { singleOrder, orderState } from "../../state/orders";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import { Grid } from "@material-ui/core";
-import axios from "axios";
-
+import { MapContainer, TileLayer, Circle, Tooltip } from "react-leaflet";
+import { useSnackbar } from "notistack";
+import messagesHandler from "../../utils/messagesHandler";
+import socket from "../../utils/socket";
 import "leaflet/dist/leaflet.css";
-
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Circle,
-  Tooltip,
-} from "react-leaflet";
 
 const useStyles = makeStyles({
   root: {
@@ -37,15 +33,16 @@ export default function SingleOrder({ match }) {
   const history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [products, setProducts] = useState([]);
   const order = useSelector((state) => state.orders.singleOrder);
-
   const cadete = useSelector((state) => state.users.user);
+  const [products, setProducts] = useState([]);
   const [coord, setCoord] = useState(/*[-26.8198, -65.2169]*/);
   const [carga, setCarga] = useState(false);
+  const messages = messagesHandler(useSnackbar());
+  const id = match.id;
 
   useEffect(() => {
-    dispatch(singleOrder(match.id)).then((res) => {
+    dispatch(singleOrder(id)).then((res) => {
       let ordenes = res.payload;
       setCarga(true);
       return axios
@@ -56,35 +53,24 @@ export default function SingleOrder({ match }) {
           setCoord(res.data.features[0].geometry.coordinates);
         })
         .then(() => {
-          return (
-            axios
-              .get(`http://localhost:8000/api/product/${match.orderNumber}`)
-
-              .then((res) => setProducts(res.data.count))
-              /* .then(() => {
-            return axios.get(
-              `https://nominatim.openstreetmap.org/search?street=${ordenes.number}+${ordenes.street}&city=${ordenes.city}&state=${ordenes.province}&country=argentina&format=geocodejson`
-            );
-          })
-          .then((res) => {
-            setCoord(res.data.features[0].geometry.coordinates);
-          }) */
-              .then(setCarga(false))
-              /*  .then(() => {
-            return axios.get(
-              `https://nominatim.openstreetmap.org/search?street=${ordenes.number}${ordenes.street}&city=${ordenes.city}&state=${ordenes.province}&country=argentina&format=geocodejson`
-            );
-          })
-          .then((res) => {
-            console.log(res, "ACA ESTA LA RESPUESTA");
-            setCoord(res.data.features[0].geometry.coordinates);
-          });
-      }) */
-              .catch((err) => console.log(err))
-          );
+          return axios
+            .get(`http://localhost:8000/api/product/${match.orderNumber}`)
+            .then((res) => setProducts(res.data.count))
+            .then(setCarga(false))
+            .catch((err) => console.log(err));
         });
     });
   }, []);
+
+  socket.on("orden", (orden) => {
+    dispatch(singleOrder(id)).then(() => {
+      if (typeof orden === "object" && orden.status === "En camino") {
+        cadete.firstName + " " + cadete.lastName !== orden.nombre
+          ? messages.info(`${orden.nombre} ha tomado un orden`)
+          : messages.info(`Has tomado un orden *`);
+      }
+    });
+  });
 
   const ChangeState = (state) => {
     const state2 = {
@@ -94,7 +80,8 @@ export default function SingleOrder({ match }) {
     };
     dispatch(orderState(state2)).then((order) => {
       if (order.payload.status !== "En camino") history.push("/cadete");
-      else dispatch(singleOrder(match.id));
+      if (typeof order.payload === "object")
+        socket.emit("orden", { orden: order.payload });
     });
   };
 
@@ -128,7 +115,7 @@ export default function SingleOrder({ match }) {
                 " " +
                 (order.complement ? order.complement : "")}{" "}
               <br />
-              {"tel: " + order.clientPhone}
+              Tel: <a href={`tel:+${order.clientPhone}`}>{order.clientPhone}</a>
             </Typography>
             <Typography
               variant="body2"
@@ -146,7 +133,7 @@ export default function SingleOrder({ match }) {
             >
               TOMAR
             </Button>
-          ) : order.status === "En camino" ? (
+          ) : order.status === "En camino" && order.userId === cadete.id ? (
             <>
               <Button
                 size="small"

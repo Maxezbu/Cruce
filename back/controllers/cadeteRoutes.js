@@ -25,7 +25,7 @@ const userController = {
         .catch((err) => res.status(500).send(err));
     });
   },
-  
+
   async editProfileCadete(req, res) {
     const { firstName, lastName, phoneNum, vehicle } = req.body;
     try {

@@ -1,10 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-
 const app = express();
-const http = require("http").createServer(app);
+const httpServer = require("http").createServer(app);
 const db = require("./db");
-
 const config = require("./server.config.js");
 const routes = require("./routes");
 
@@ -15,19 +13,38 @@ app.use(
   })
 );
 
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", routes);
 
-const io = require("socket.io")(http, {
-  cors: {
-    origen: "http://localhost:3000/",
-  },
-});
-
 io.on("connection", (socket) => {
   let nombre;
+
+  socket.on("conectado", (nomb) => {
+    nombre = nomb;
+    console.log(`SE CONECTO ${nombre}`);
+  });
+
+  socket.on("cadetes", () => {
+    socket.broadcast.emit("cadetes", {
+      mensaje: "Se cambio el estado de un cadete",
+    });
+  });
+
+  socket.on("cadeterias", () => {
+    socket.broadcast.emit("cadeterias", {
+      mensaje: "Se cambio el estado de una cadeteria",
+    });
+  });
 
   socket.on("ordenes", (ordenes) => {
     socket.broadcast.emit("ordenes", {
@@ -36,15 +53,14 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("conectado", (nomb) => {
-    nombre = nomb;
-    console.log(`SE CONECTO ${nombre}`);
-  });
-
   socket.on("orden", (orden) => {
     socket.broadcast.emit("orden", {
       nombre: nombre,
-      orden: orden.orden,
+      orden: orden,
+    });
+    socket.emit("orden", {
+      nombre: nombre,
+      orden: orden,
     });
   });
 
@@ -59,7 +75,7 @@ io.on("connection", (socket) => {
 
 const startServer = async () => {
   await db.sync({ force: false });
-  http.listen(config.port, () =>
+  httpServer.listen(config.port, () =>
     console.log(`Server listening at port ${config.port}`)
   );
 };

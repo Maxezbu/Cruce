@@ -1,26 +1,25 @@
-import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import React, { useState } from "react";
+import {
+  Grid,
+  Typography,
+  TextField,
+  Button,
+  CssBaseline,
+} from "@material-ui/core";
+
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-
-import useStyles from "../../utils/stylesCadeteria";
 import { useSnackbar } from "notistack";
-import messageHandler from "../../utils/messagesHandler";
-
 import { editProfileCadeteria } from "../../state/cadeterias";
 import { fetchCad } from "../../state/cadeterias";
+import useStyles from "../../styles/stylesCadeteria";
+import messageHandler from "../../utils/messagesHandler";
 
 export default function ProfileCadeteria() {
   const dispatch = useDispatch();
-
   const [input, setInput] = useState({});
   const history = useHistory();
-
   const messages = messageHandler(useSnackbar());
-
   const cadeteria = useSelector((state) => state.cadeterias.singleCadeteria);
 
   const handleChange = (e) => {
@@ -36,7 +35,8 @@ export default function ProfileCadeteria() {
     dispatch(editProfileCadeteria({ id, input }))
       .then(({ payload }) => {
         if (payload.errors) {
-          payload.errors.map((e) => messages.error(e.message)) && dispatch(fetchCad());
+          payload.errors.map((e) => messages.error(e.message)) &&
+            dispatch(fetchCad());
         } else {
           dispatch(fetchCad());
           messages.info("datos actualizados") && history.push("/cadeteria");
@@ -45,12 +45,21 @@ export default function ProfileCadeteria() {
       .catch((err) => messages.error("Fallo al actualizar los datos"));
   };
 
-  console.log("CADETERIA EN PROFILE ====>", cadeteria);
-
   return (
     <React.Fragment>
-      <Typography variant="h6" gutterBottom>
-        Editar el perfil de la cadeteria
+      <CssBaseline />
+      <Typography
+        variant="h4"
+        key="1"
+        style={{
+          textAlign: "center",
+          marginTop: 45,
+          marginBottom: 50,
+          color: "black",
+          fontWeight: "bold",
+        }}
+      >
+        EDITAR PERFIL CADETERIA
       </Typography>
       <form style={{ marginLeft: "7%" }}>
         <Grid container spacing={3}>
@@ -94,14 +103,8 @@ export default function ProfileCadeteria() {
           color="primary"
           onClick={editCadeteria}
           className={useStyles.button}
-          style={{
-            backgroundColor: "#C25500",
-            width: "25%",
-            marginRight: "1%",
-            color: "black",
-          }}
         >
-          Edit
+          Editar
         </Button>
       </form>
     </React.Fragment>

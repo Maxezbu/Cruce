@@ -1,68 +1,88 @@
-import React from 'react';
-import Link from '@material-ui/core/Link';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Title from './Title';
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
 
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
+export default function Orders({ metricas }) {
+  function createData(
+    name,
+    deliver,
+    returned,
+    averageTimeDeli,
+    averageTimePick,
+    id
+  ) {
+    return { name, deliver, returned, averageTimeDeli, averageTimePick, id };
+  }
 
-const rows = [
-  createData(0, '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
-  createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-  createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
-  createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
-];
+  let conversor = (tiempo) => {
+    let enMinutos = tiempo / 1000 / 60;
+    let hs = enMinutos / 60;
+    let minutos = enMinutos % 60;
 
-function preventDefault(event) {
-  event.preventDefault();
-}
+    return Math.floor(hs) + " Hs : " + Math.round(minutos) + " Min";
+  };
 
-const useStyles = makeStyles((theme) => ({
-  seeMore: {
-    marginTop: theme.spacing(3),
-  },
-}));
-
-export default function Orders() {
-  const classes = useStyles();
+  const dataRow = (obj) => {
+    let resultado = [];
+    for (const id in obj) {
+      resultado.push(
+        createData(
+          obj[id].name,
+          obj[id].deliver,
+          obj[id].returned,
+          conversor(obj[id].averageTimeDeli),
+          conversor(obj[id].averageTimePick),
+          id
+        )
+      );
+    }
+    return resultado;
+  };
+  
+  const rows = dataRow(metricas);
   return (
     <React.Fragment>
-      <Title>Recent Orders</Title>
-      <Table size="small">
+      <Table size="medium">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
+            <TableCell>Cadeteria</TableCell>
+            <TableCell>Entregadas</TableCell>
+            <TableCell>A Sucursal</TableCell>
+            <TableCell>Tiempo Entrega</TableCell>
+            <TableCell>Tiempo Espera</TableCell>
+            <TableCell>Detalle</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
-            </TableRow>
-          ))}
+          {rows.map((row) => {
+            console.log(row);
+            return (
+              <TableRow key={row.id}>
+                <TableCell align="left">{row.name}</TableCell>
+                <TableCell align="center">{row.deliver}</TableCell>
+                <TableCell align="center">{row.returned}</TableCell>
+                <TableCell align="center">{row.averageTimeDeli}</TableCell>
+                <TableCell align="right">{row.averageTimePick}</TableCell>
+
+                <TableCell align="right">
+                  <Link
+                    to={`/admin/metrics/${row.id}/cadeteria/${row.name}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Ver
+                  </Link>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
-      <div className={classes.seeMore}>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          See more orders
-        </Link>
-      </div>
     </React.Fragment>
   );
 }

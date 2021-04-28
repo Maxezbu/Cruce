@@ -10,6 +10,7 @@ export const allOrders = createAsyncThunk("ALL_OREDERS", (id) => {
     })
     .catch((e) => console.log(e));
 });
+
 export const adminOrders = createAsyncThunk("ADMIN_ORDERS", () => {
   return axios
     .get(`http://localhost:8000/api/orders/adminOrders`)
@@ -27,32 +28,52 @@ export const upLoadOrders = createAsyncThunk("UPLOAD_ORDERS", (items) => {
 });
 
 // Le cambia el estado a ala  orden (pendiente, en camino, entregada, devuelto a cadetería)
-export const orderState = createAsyncThunk(
-  "ORDERS_STATE",
-  (order, thunkApi) => {
-    return axios
-      .put(`http://localhost:8000/api/orders/edit/${order.orderNumber}`, {
-        status: order.state,
-        cadeteId: order.cadeteId,
-      })
+export const orderState = createAsyncThunk("ORDERS_STATE", (order) => {
+  return axios
+    .put(`http://localhost:8000/api/orders/edit/${order.orderNumber}`, {
+      status: order.state,
+      cadeteId: order.cadeteId,
+    })
 
-      .then((res) => {
-        console.log("HOOOOLAAAAAAA", res.data);
-        return res.data;
-      })
-      .catch((e) => console.log(e));
-  }
-);
+    .then((res) => {
+      return res.data;
+    })
+    .catch((e) => console.log(e));
+});
 
 // Trae una orden en particular
 export const singleOrder = createAsyncThunk("SINGLE_ORDER", (id) => {
   return axios
-
     .get(`http://localhost:8000/api/orders/${id}`)
     .then((res) => res.data)
     .catch((e) => console.log(e));
 });
+export const metricOrders = createAsyncThunk("METRIC_ORDER", (obj) => {
+  
+  return axios
+    .get(
+      `http://localhost:8000/api/metrics/${obj.id}/${obj.model}/cadeteria-average`
+    )
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+});
+
+export const AllcadeteriasMetrics = createAsyncThunk("ALLCADETERIA_METRIC", () => {
+  return axios
+    .get(`http://localhost:8000/api/metrics/cadeteria-average`)
+    .then((res) =>res.data)
+    .catch((e) => console.log(e));
+});
+export const AllcadetesMetrics = createAsyncThunk("ALLCADETE_METRIC", () => {
+  return axios
+    .get(`http://localhost:8000/api/metrics/cadete-average`)
+    .then((res) =>res.data)
+    .catch((e) => console.log(e));
+});
+
+
 const updateOrder = (orders, newOrder) => {
+
   return orders.map((order) =>
     order.id === newOrder.id ? { ...order, status: newOrder.status } : order
   );
@@ -61,9 +82,13 @@ const updateOrder = (orders, newOrder) => {
 const initialState = {
   orders: [],
   singleOrder: {},
+  singleMetrics:{},
+  metrics: {},
+  orderError: "",
 };
 
 const ordersReducer = createReducer(initialState, {
+ 
   [allOrders.fulfilled]: (state, action) => {
     if (action.payload.orders) {
       return { ...state, orders: action.payload.orders };
@@ -71,13 +96,18 @@ const ordersReducer = createReducer(initialState, {
       return { ...state, orders: action.payload };
     }
   },
+
   [adminOrders.fulfilled]: (state, action) => {
     console.log("ORDENES ADMIN REDUX", action.payload);
     return { ...state, orders: action.payload };
   },
 
   [orderState.fulfilled]: (state, action) => {
-    return { ...state, orders: updateOrder(state.orders, action.payload) };
+    if (typeof action.payload === "object")
+      return { ...state, orders: updateOrder(state.orders, action.payload) };
+    else {
+      return { ...state, orderError: action.payload };
+    }
   },
 
   [singleOrder.fulfilled]: (state, action) => {
@@ -87,6 +117,20 @@ const ordersReducer = createReducer(initialState, {
   [upLoadOrders.fulfilled]: (state, action) => {
     return { ...state, orders: action.payload };
   },
+  [AllcadeteriasMetrics.fulfilled]: (state, action) => {
+    return { ...state, metrics: action.payload };
+  },
+  [AllcadetesMetrics.fulfilled]: (state, action) => {
+    return { ...state, metrics: action.payload };
+  },
+  [metricOrders.fulfilled]: (state, action) => {
+    return { ...state, singleMetrics: action.payload };
+  },
+
+  // [testAllOrders.fulfilled]: (state, action) => {
+  //   return { ...state, orders: action.payload };
+  // },
+  
 });
 
 export default ordersReducer;
